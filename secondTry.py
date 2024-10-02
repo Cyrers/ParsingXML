@@ -9,6 +9,9 @@
     TODO: Faire en sorte de pouvoir afficher des graphes sur l'IG (avoir une représentation des éléments qui sont en commun/qui ont été rajoutés) (NETWORKX maybe ?)
 
 """
+
+import json
+
 def ouvertureDuXSD(path):
     with open(path) as f:
         xsd = f.read()
@@ -21,14 +24,16 @@ def print_hex_values(strings):
         print("Hex values:", ' '.join(hex_values))
         print()  # For spacing between each string's output
 
-def analyze_xsd_lines(xsd_lines):
-    open_tags_line = []
 
+
+"""def analyze_xsd_lines(xsd_lines):
+    open_tags_line = []
+    conteneurJson = {}
     for line in xsd_lines:
         #print(line)
         if not line.strip().endswith("/>"):
             if not line.startswith("<"):
-                #modifier ici
+                # call une fonction affecte la value a l'élément courant
                 pass
             else:
                 if (line.startswith("</")) & (open_tags_line != []):
@@ -47,7 +52,62 @@ def analyze_xsd_lines(xsd_lines):
         else:
             print("Balise Autofermée")
             #modifier ici
-        print(open_tags_line)
+        print(open_tags_line)"""
+
+def analyze_xsd_lines(xsd_lines):
+    open_tags = []  # Stack des balises ouvertes
+    conteneurJson = {}  # Conteneur JSON final
+    current_dict = conteneurJson  # Dictionnaire courant pour ajouter les éléments
+    for line in xsd_lines:
+        line = line.strip()
+
+        if not line.endswith("/>"):  # Si la ligne n'est pas une balise autofermante
+            if line.startswith("</"):  # Balise fermante
+                tag = line[2:-1].split()[0]  # Récupère le nom de la balise sans le '/'
+                if open_tags:
+                    open_tags.pop()  # Supprime la balise ouverte correspondante
+                if len(open_tags) > 0:
+                    current_dict = conteneurJson
+                    for open_tag in open_tags:
+                        current_dict = current_dict[open_tag]  # Retour à la balise parente
+            else:  # Balise ouvrante
+                tag = line[1:].split()[0]  # Récupère le nom de la balise sans '<'
+                if tag not in current_dict:  # Si la balise n'existe pas, on la crée
+                    current_dict[tag] = {}  # Crée un dictionnaire pour cette balise
+                open_tags.append(tag)  # Ajoute la balise ouverte à la pile
+                current_dict = current_dict[tag]  # Passe au sous-dictionnaire de la balise
+
+        else:  # Balise auto-fermante
+            tag = line[1:-2].split()[0]  # Récupère le nom de la balise sans '<' et '/>'
+            current_dict[tag] = None  # Ajoute la balise autofermée avec une valeur nulle
+
+        # Affichage de l'état de la pile de balises (optionnel)
+        print(f"Pile des balises: {open_tags}")
+
+    return conteneurJson
+
+
+# Exemple d'utilisation
+xsd_lines = [
+    '<root>',
+    '  <element1>',
+    '    <subelement1/>',
+    '    <subelement2/>',
+    '  </element1>',
+    '  <element2>',
+    '    <subelement3>',
+    '      <subsubelement1/>',
+    '      <subsubelement2>'
+    '        bidule',
+    '      </subsubelement2>',
+    '    </subelement3>',
+    '  </element2>',
+    '</root>'
+]
+
+result = analyze_xsd_lines(xsd_lines)
+print(result)
+
 
 
 
@@ -86,5 +146,5 @@ def is_subset(json1, json2):
         return json1 == json2
 
 
-file = ouvertureDuXSD("bidule.xsd")
-parsingXSD(file)
+"""file = ouvertureDuXSD("bidule.xsd")
+parsingXSD(file)"""
