@@ -38,10 +38,7 @@ def print_hex_values(strings):
             else:
                 if (line.startswith("</")) & (open_tags_line != []):
                     # On ne vérifie pas l'on est en train de fermer une balise parente sur une balise enfante
-                    if ( "<" + line[2:-1]) in open_tags_line:
-                        open_tags_line.remove("<" + line[2:-1])
-                    elif ( "<" + line[2:-1] + ">") in open_tags_line:
-                        open_tags_line.remove("<" + line[2:-1] + ">")
+                    open_tags_line.pop()
                     # modifier ici
                 else:
                     open_tags_line.append(line.split(" ")[0])
