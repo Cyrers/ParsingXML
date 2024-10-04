@@ -104,19 +104,20 @@ def returnLignesEnfant(lignes):
     lignes_enfant = []
     pile_tags = []
     index_children =[]
-    for i in range(1, len(lignes)):
-        if lignes[i].startswith("</"):
-            if not pile_tags:
-                print(lignes_enfant, index_children)
-                return lignes_enfant, index_children
-            else:
-                pile_tags.pop()
-        elif lignes[i].startswith("<"):
-            if not pile_tags:
-                lignes_enfant.append(lignes[i])
-                index_children.append(i)
-            if not lignes[i].endswith("/>"):
-                pile_tags.append(lignes[i])
+    if not lignes[0].endswith("/>"):
+        for i in range(1, len(lignes)):
+            if lignes[i].startswith("</"):
+                if not pile_tags:
+                    print(lignes_enfant, index_children)
+                    return lignes_enfant, index_children
+                else:
+                    pile_tags.pop()
+            elif lignes[i].startswith("<"):
+                if not pile_tags:
+                    lignes_enfant.append(lignes[i])
+                    index_children.append(i)
+                if not lignes[i].endswith("/>"):
+                    pile_tags.append(lignes[i])
     return None, None
 
 
@@ -178,9 +179,13 @@ def convert_xsd_to_json():
 
     # Initialisation du dictionnaire JSON
     json_dict = {}
+    element_name = cleaned_file[0].split(" ")[0][1:]  # Récupère le nom de la balise
+    element_attributes = retourHashMapContenuLigne(cleaned_file[0])
+    json_dict[element_name] = element_attributes
+    json_dict[element_name]["children"] = {}
 
     # Convertir l'élément racine et ses enfants
-    add_child_to_json(json_dict, cleaned_file)
+    add_child_to_json(json_dict[element_name]["children"], cleaned_file)
 
     save_json_to_file(json_dict, 'output.json')
 
