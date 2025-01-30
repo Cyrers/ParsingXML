@@ -1,0 +1,179 @@
+{
+    "xsd:schema": {
+        "targetNamespace": "\"http://com.ibm.wbit.comptest.controller\"",
+        "xmlns:Q1": "\"http://com.ibm.wbit.comptest.controller\"",
+        "xmlns:xsd": "\"http://www.w3.org/2001/XMLSchema\"",
+        "children": {
+            "xsd:complexType0": {
+                "name": "\"TestResults\"",
+                "children": {
+                    "xsd:sequence>0": {
+                        "children": {
+                            "xsd:element0": {
+                                "maxOccurs": "\"unbounded\"",
+                                "minOccurs": "\"0\"",
+                                "name": "\"testSuites\"",
+                                "type": "\"Q1:TestSuiteRun\"",
+                                "children": {}
+                            }
+                        }
+                    },
+                    "xsd:attribute1": {
+                        "name": "\"testProject\"",
+                        "type": "\"xsd:string\"",
+                        "children": {}
+                    }
+                }
+            },
+            "xsd:complexType1": {
+                "name": "\"TestSuiteRun\"",
+                "children": {
+                    "xsd:complexContent>0": {
+                        "children": {
+                            "xsd:extension0": {
+                                "base": "\"Q1:TestRun\"",
+                                "children": {
+                                    "xsd:sequence>0": {
+                                        "children": {
+                                            "xsd:element0": {
+                                                "maxOccurs": "\"unbounded\"",
+                                                "minOccurs": "\"0\"",
+                                                "name": "\"testCases\"",
+                                                "type": "\"Q1:TestCaseRun\"",
+                                                "children": {}
+                                            }
+                                        }
+                                    },
+                                    "xsd:attribute1": {
+                                        "name": "\"tests\"",
+                                        "type": "\"xsd:int\"",
+                                        "children": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "xsd:complexType2": {
+                "name": "\"TestCaseRun\"",
+                "children": {
+                    "xsd:complexContent>0": {
+                        "children": {
+                            "xsd:extension0": {
+                                "base": "\"Q1:TestRun\"",
+                                "children": {
+                                    "xsd:sequence>0": {
+                                        "children": {
+                                            "xsd:element0": {
+                                                "name": "\"result\"",
+                                                "type": "\"Q1:Severity\"",
+                                                "children": {}
+                                            },
+                                            "xsd:element1": {
+                                                "maxOccurs": "\"unbounded\"",
+                                                "minOccurs": "\"0\"",
+                                                "name": "\"variations\"",
+                                                "type": "\"Q1:VariationRun\"",
+                                                "children": {}
+                                            }
+                                        }
+                                    },
+                                    "xsd:attribute1": {
+                                        "name": "\"variationCount\"",
+                                        "type": "\"xsd:int\"",
+                                        "children": {}
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "xsd:complexType3": {
+                "name": "\"VariationRun\"",
+                "children": {
+                    "xsd:complexContent>0": {
+                        "children": {
+                            "xsd:extension0": {
+                                "base": "\"Q1:TestRun\"",
+                                "children": {
+                                    "xsd:sequence>0": {
+                                        "children": {
+                                            "xsd:element0": {
+                                                "name": "\"result\"",
+                                                "type": "\"Q1:Severity\"",
+                                                "children": {}
+                                            },
+                                            "xsd:element1": {
+                                                "name": "\"exception\"",
+                                                "nillable": "\"true\"",
+                                                "type": "\"xsd:string\"",
+                                                "children": {
+                                                    "xsd:annotation>0": {
+                                                        "children": {
+                                                            "xsd:documentation>0": {
+                                                                "children": {}
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "xsd:simpleType4": {
+                "name": "\"Severity\"",
+                "children": {
+                    "xsd:restriction0": {
+                        "base": "\"xsd:string\"",
+                        "children": {
+                            "xsd:enumeration0": {
+                                "value": "\"pass\"",
+                                "children": {}
+                            },
+                            "xsd:enumeration1": {
+                                "value": "\"fail\"",
+                                "children": {}
+                            },
+                            "xsd:enumeration2": {
+                                "value": "\"error\"",
+                                "children": {}
+                            }
+                        }
+                    }
+                }
+            },
+            "xsd:complexType5": {
+                "name": "\"TestRun\"",
+                "children": {
+                    "xsd:attribute0": {
+                        "name": "\"name\"",
+                        "type": "\"xsd:string\"",
+                        "children": {}
+                    },
+                    "xsd:attribute1": {
+                        "name": "\"startTime\"",
+                        "type": "\"xsd:dateTime\"",
+                        "children": {}
+                    },
+                    "xsd:attribute2": {
+                        "name": "\"endTime\"",
+                        "type": "\"xsd:dateTime\"",
+                        "children": {}
+                    },
+                    "xsd:attribute3": {
+                        "name": "\"result\"",
+                        "type": "\"xsd:string\"",
+                        "children": {}
+                    }
+                }
+            }
+        }
+    }
+}

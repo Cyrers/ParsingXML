@@ -166,7 +166,7 @@ def add_attributes_to_json(json_dict, element_name, attributes):
 #
 #     return json_dict
 
-def convert_xsd_to_json():
+def convert_xsd_to_json(filename='bidule.xsd', output_file='output.json'):
     # file = ouvertureDuXSD("bidule.xsd")
     # cleaned_file = parsingXSD(file)
     # json_dict = {}
@@ -174,7 +174,7 @@ def convert_xsd_to_json():
     # line_attributes = retourHashMapContenuLigne(cleaned_file[0])
     # add_attributes_to_json(json_dict, cleaned_file[0].split(" ")[0][5:], line_attributes)
 
-    file = ouvertureDuXSD("bidule.xsd")  # Lire le fichier XSD
+    file = ouvertureDuXSD(filename)  # Lire le fichier XSD
     cleaned_file = parsingXSD(file)  # Nettoyer le fichier (prétraitement)
 
     # Initialisation du dictionnaire JSON
@@ -187,7 +187,7 @@ def convert_xsd_to_json():
     # Convertir l'élément racine et ses enfants
     add_child_to_json(json_dict[element_name]["children"], cleaned_file)
 
-    save_json_to_file(json_dict, 'output.json')
+    save_json_to_file(json_dict, output_file)
 
 
 def save_json_to_file(json_data, output_filename):
@@ -265,7 +265,7 @@ xsd_lines = [
 #print(result, i)"""
 
 
-convert_xsd_to_json()
+# convert_xsd_to_json()
 
 
 
@@ -292,3 +292,20 @@ def is_subset(json1, json2):
 
 
 #file = ouvertureDuXSD("bidule.xsd")
+
+
+def main():
+    convert_xsd_to_json("bidule.xsd", "output1.json")
+    convert_xsd_to_json("bidule2.xsd", "output2.json")
+    convert_xsd_to_json("biduleMinux.xsd", "output3.json")
+    with open("output1.json") as file1:
+        json1 = json.load(file1)
+    with open("output2.json") as file2:
+        json2 = json.load(file2)
+    with open("output3.json") as file3:
+        json3 = json.load(file3)
+    print(is_subset(json1, json2))
+    print(is_subset(json1, json3))
+
+if __name__ == "__main__":
+    main()
