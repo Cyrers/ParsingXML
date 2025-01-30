@@ -48,7 +48,7 @@ def returnLignesEnfant(lignes):
         for i in range(1, len(lignes)):
             if lignes[i].startswith("</"):
                 if not pile_tags:
-                    print(lignes_enfant, index_children)
+                    # print(lignes_enfant, index_children)
                     return lignes_enfant, index_children
                 else:
                     pile_tags.pop()
@@ -124,7 +124,7 @@ def parsingXSD(xsd):
     if xsd[0] == '<?xml version="1.0" encoding="UTF-8"?>':
         xsd = xsd[1:]
     xsd = [line.replace('\t', '') for line in xsd]
-    print(xsd)
+    # print(xsd)
     for i in range(len(xsd)):
         while xsd[i].startswith(' '):
             xsd[i] = xsd[i][1:]
@@ -153,27 +153,73 @@ def is_subset(json1, json2):
         return json1 == json2
 
 
-#file = ouvertureDuXSD("bidule.xsd")
+def check_diff_subset(json1, json2):
+    """
+    Compare deux JSON et retourne les éléments qui diffèrent entre les deux JSON.
+    """
+    diffs = {}
+    def compare_dicts(json1, json2):
+        for key in json1:
+            if key not in json2:
+                diffs[key] = json1[key]
+            elif is_subset(json1[key], json2[key]):
+                if isinstance(json1[key], dict):
+                    diffs[key] = compare_dicts(json1[key], json2[key])
+                elif isinstance(json1[key], list):
+                    diffs[key] = [elem for elem in json1[key] if not any(is_subset(elem, item) for item in json2[key])]
+                else:
+                    diffs[key] = json1[key]
+        return diffs
+    compare_dicts(json1, json2)
+    return diffs
+    
+
+def print_json_tree(json_dict, indent=0, parent_name=None):
+    """
+    Affiche le dictionnaire JSON sous forme d'arbre avec une indentation correcte.
+    Place les champs 'name' des enfants directement au niveau du parent si celui-ci ne contient pas de 'name'.
+    """
+    # Si le dictionnaire contient un champ 'name', on l'affiche
+    if "name" in json_dict:
+        name_value = json_dict["name"].strip('"')  # Suppression des guillemets
+        print(' ' * indent + name_value)
+        parent_name = name_value  # On met à jour le parent_name
+
+    for key, value in json_dict.items():
+        if isinstance(value, dict):
+            print_json_tree(value, indent + 4, parent_name)
+        elif isinstance(value, list):
+            for item in value:
+                if isinstance(item, dict):
+                    print_json_tree(item, indent + 4, parent_name)
+
+        # Si on est dans un cas où un élément a un parent sans name, on affiche au niveau du parent
+        elif key == "name" and parent_name is None:
+            print(' ' * indent + str(value).strip('"'))  # Affichage au bon niveau
 
 
-# def main():
-#     convert_xsd_to_json("bidule.xsd", "output1.json")
-#     convert_xsd_to_json("bidule2.xsd", "output2.json")
-#     convert_xsd_to_json("biduleMinux.xsd", "output3.json")
-#     convert_xsd_to_json("bidulefalse.xsd", "output4.json")
-#     with open("output1.json") as file1:
-#         json1 = json.load(file1)
-#     with open("output2.json") as file2:
-#         json2 = json.load(file2)
-#     with open("output3.json") as file3:
-#         json3 = json.load(file3)
-#     with open("output4.json") as file4:
-#         json4 = json.load(file4)
-#     print(is_subset(json2, json1))
-#     assert(is_subset(json2, json1))
-#     print(is_subset(json3, json1))
-#     assert(is_subset(json3, json1))
-#     print(is_subset(json4, json1))
-#     assert(not is_subset(json4, json1))
-# if __name__ == "__main__":
-#     main()
+
+
+
+
+def main():
+    convert_xsd_to_json("bidule.xsd", "output1.json")
+    convert_xsd_to_json("bidule2.xsd", "output2.json")
+    convert_xsd_to_json("biduleMinux.xsd", "output3.json")
+    convert_xsd_to_json("bidulefalse.xsd", "output4.json")
+    with open("output1.json") as file1:
+        json1 = json.load(file1)
+    with open("output2.json") as file2:
+        json2 = json.load(file2)
+    with open("output3.json") as file3:
+        json3 = json.load(file3)
+    with open("output4.json") as file4:
+        json4 = json.load(file4)
+    print(check_diff_subset(json2, json1))
+    print(check_diff_subset(json3, json1))
+    print(check_diff_subset(json4, json1))
+    print(print_json_tree(json1))
+    
+
+if __name__ == "__main__":
+    main()
