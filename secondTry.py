@@ -1,10 +1,10 @@
 """
-    TODO: Faire une interface graphique pour le programme
-    TODO: Faire un programme pour vérifier l'intégrité des fichiers entrants
+    TODO: Faire une interface graphique pour le programme -> OK
+    TODO: Faire un programme pour vérifier l'intégrité des fichiers entrants -> OSEF
         Vérfier que les balises sont bien fermées
         Détecter qu'un fichier à été altéré
 
-    TODO: Construire le JSON a partir du fichier entrant
+    TODO: Construire le JSON a partir du fichier entrant  -> OK
     TODO: Algorithme de comparaison des JSON qui détermine si un json est compris dans un autre-> OK
     TODO: Faire en sorte de pouvoir afficher des graphes sur l'IG (avoir une représentation des éléments qui sont en commun/qui ont été rajoutés) (NETWORKX maybe ?)
 
@@ -24,66 +24,6 @@ def print_hex_values(strings):
         print("Hex values:", ' '.join(hex_values))
         print()  # For spacing between each string's output
 
-
-"""
-def analyze_xsd_lines(xsd_lines):
-    open_tags_line = []
-    conteneurJson = {}  # Conteneur JSON final
-    current_dict = conteneurJson  # Dictionnaire courant pour ajouter les éléments
-    for line in xsd_lines:
-        #print(line)
-        if not line.strip().endswith("/>"):
-            if not line.startswith("<"):
-                #current_dict["value"] = line
-                pass
-            else:
-                if (line.startswith("</")) & (open_tags_line != []):
-                    # On ne vérifie pas l'on est en train de fermer une balise parente sur une balise enfante
-                    open_tags_line.pop()
-                    # modifier ici
-                else:
-                    open_tags_line.append(line.split(" ")[0])
-                    #modifier ici
-            for i in range(len(open_tags_line)):
-                if open_tags_line[i] == '':
-                    open_tags_line.pop(i)
-        else:
-            print("Balise Autofermée")
-            #modifier ici
-        print(open_tags_line)
-
-def analyze_xsd_lines(xsd_lines):
-    open_tags = []  # Stack des balises ouvertes
-    conteneurJson = {}  # Conteneur JSON final
-    current_dict = conteneurJson  # Dictionnaire courant pour ajouter les éléments
-    for line in xsd_lines:
-        line = line.strip()
-
-        if not line.endswith("/>"):  # Si la ligne n'est pas une balise autofermante
-            if line.startswith("</"):  # Balise fermante
-                tag = line[2:-1].split()[0]  # Récupère le nom de la balise sans le '/'
-                if open_tags:
-                    open_tags.pop()  # Supprime la balise ouverte correspondante
-                if len(open_tags) > 0:
-                    current_dict = conteneurJson
-                    for open_tag in open_tags:
-                        current_dict = current_dict[open_tag]  # Retour à la balise parente
-            else:  # Balise ouvrante
-                tag = line[1:].split()[0]  # Récupère le nom de la balise sans '<'
-                if tag not in current_dict:  # Si la balise n'existe pas, on la crée
-                    current_dict[tag] = {}  # Crée un dictionnaire pour cette balise
-                open_tags.append(tag)  # Ajoute la balise ouverte à la pile
-                current_dict = current_dict[tag]  # Passe au sous-dictionnaire de la balise
-
-        else:  # Balise auto-fermante
-            tag = line[1:-2].split()[0]  # Récupère le nom de la balise sans '<' et '/>'
-            current_dict[tag] = None  # Ajoute la balise autofermée avec une valeur nulle
-
-        # Affichage de l'état de la pile de balises (optionnel)
-        print(f"Pile des balises: {open_tags}")
-
-    return conteneurJson
-"""
 def retourHashMapContenuLigne(ligne):
     if not ligne.startswith("</"):
         if ligne.endswith("/>"):
@@ -131,41 +71,6 @@ def add_attributes_to_json(json_dict, element_name, attributes):
     json_dict[element_name] = element_json
     return json_dict
 
-# def parse_element(lignes, json_dict, index=0):
-#     """Fonction récursive pour parcourir et convertir chaque balise et ses enfants."""
-#     while index < len(lignes):
-#         ligne = lignes[index]
-#
-#         # Vérifier si la ligne est une balise d'ouverture (ou auto-fermante)
-#         if ligne.startswith("<") and not ligne.startswith("</"):
-#             element_name = ligne.split(" ")[0][1:]  # Récupère le nom de la balise
-#             if element_name.endswith("/"):  # Si le nom de la balise se termine par '/', enlever cela
-#                 element_name = element_name[:-1]
-#
-#             # Récupérer les attributs de l'élément
-#             attributes = retourHashMapContenuLigne(ligne)
-#
-#             # Ajouter l'élément au JSON
-#             json_dict = add_attributes_to_json(json_dict, element_name, attributes)
-#
-#             # Si la balise n'est pas auto-fermante, chercher ses enfants
-#             if not ligne.endswith("/>"):
-#                 enfants, next_index = returnLignesEnfant(lignes[index:])
-#
-#                 # Si on trouve des enfants, on les traite de manière récursive
-#                 if enfants:
-#                     json_dict[element_name]["children"] = []  # Initialiser la liste des enfants
-#                     child_dict = {}
-#                     parse_element(enfants, child_dict)  # Appel récursif
-#                     json_dict[element_name]["children"].append(child_dict)  # Ajouter les enfants
-#
-#                 # Met à jour l'index à la fin du bloc enfant
-#                 index += next_index
-#
-#         index += 1  # Passer à la ligne suivante
-#
-#     return json_dict
-
 def convert_xsd_to_json(filename='bidule.xsd', output_file='output.json'):
     # file = ouvertureDuXSD("bidule.xsd")
     # cleaned_file = parsingXSD(file)
@@ -188,38 +93,31 @@ def convert_xsd_to_json(filename='bidule.xsd', output_file='output.json'):
     add_child_to_json(json_dict[element_name]["children"], cleaned_file)
 
     save_json_to_file(json_dict, output_file)
-
+    return json_dict
 
 def save_json_to_file(json_data, output_filename):
     """Sauvegarde le dictionnaire JSON dans un fichier."""
     with open(output_filename, 'w', encoding='utf-8') as f:
         json.dump(json_data, f, ensure_ascii=False, indent=4)
-"""
-def add_child_to_json(json_dict, lignes_courantes):
-    lignes_children, liste_index_children = returnLignesEnfant(lignes_courantes)
-    new_dict = json_dict
-    if lignes_children:
-        for j in range(len(lignes_children)) :
-            element_name = lignes_children[j].split(" ")[0][1:]  # Récupère le nom de la balise
-            element_attributes = retourHashMapContenuLigne(lignes_children[j])
-            new_dict[str(element_name + str(j))] = element_attributes
-            new_dict[str(element_name + str(j))]["children"] = []
-            add_child_to_json(new_dict[element_name + str(j)]["children"], lignes_courantes[liste_index_children[j]:])
-    return new_dict
-
-"""
+    
 def add_child_to_json(json_dict, lignes_courantes):
     lignes_children, liste_index_children = returnLignesEnfant(lignes_courantes)
     if lignes_children:
-        for j in range(len(lignes_children)):
-            element_name = lignes_children[j].split(" ")[0][1:]  # Récupère le nom de la balise
-            element_attributes = retourHashMapContenuLigne(lignes_children[j])
-            # On s'assure que 'json_dict' est bien un dictionnaire avant d'ajouter des éléments
-            if isinstance(json_dict, dict):
-                json_dict[element_name + str(j)] = element_attributes
-                json_dict[element_name + str(j)]["children"] = {}
-                add_child_to_json(json_dict[element_name + str(j)]["children"], lignes_courantes[liste_index_children[j]:])
+        for j, ligne in enumerate(lignes_children):
+            element_name = ligne.split(" ")[0][1:]  # Récupère le nom de la balise
+            element_attributes = retourHashMapContenuLigne(ligne)
+            
+            # Utiliser un defaultdict pour stocker plusieurs occurrences d'un même élément
+            if element_name not in json_dict:
+                json_dict[element_name] = []
+            
+            child_dict = {"attributes": element_attributes, "children": {}}
+            json_dict[element_name].append(child_dict)
+            
+            add_child_to_json(child_dict["children"], lignes_courantes[liste_index_children[j]:])
+    
     return json_dict
+
 
 def parsingXSD(xsd):
     xsd = xsd.strip().split('\n')
@@ -231,42 +129,6 @@ def parsingXSD(xsd):
         while xsd[i].startswith(' '):
             xsd[i] = xsd[i][1:]
     return xsd
-
-
-
-
-
-
-
-
-
-
-
-
-
-xsd_lines = [
-    '<root>',
-    '<element1>',
-    '<subelement1/>',
-    '<subelement2/>',
-    '</element1>',
-    '<element2>',
-    '<subelement3>',
-    '<subsubelement1/>',
-    '<subsubelement2>'
-    'bidule',
-    '</subsubelement2>',
-    '</subelement3>',
-    '</element2>',
-    '</root>'
-]
-
-#result, i = returnLignesEnfant(xsd_lines)
-#print(result, i)"""
-
-
-# convert_xsd_to_json()
-
 
 
 def is_subset(json1, json2):
@@ -294,18 +156,24 @@ def is_subset(json1, json2):
 #file = ouvertureDuXSD("bidule.xsd")
 
 
-def main():
-    convert_xsd_to_json("bidule.xsd", "output1.json")
-    convert_xsd_to_json("bidule2.xsd", "output2.json")
-    convert_xsd_to_json("biduleMinux.xsd", "output3.json")
-    with open("output1.json") as file1:
-        json1 = json.load(file1)
-    with open("output2.json") as file2:
-        json2 = json.load(file2)
-    with open("output3.json") as file3:
-        json3 = json.load(file3)
-    print(is_subset(json1, json2))
-    print(is_subset(json1, json3))
-
-if __name__ == "__main__":
-    main()
+# def main():
+#     convert_xsd_to_json("bidule.xsd", "output1.json")
+#     convert_xsd_to_json("bidule2.xsd", "output2.json")
+#     convert_xsd_to_json("biduleMinux.xsd", "output3.json")
+#     convert_xsd_to_json("bidulefalse.xsd", "output4.json")
+#     with open("output1.json") as file1:
+#         json1 = json.load(file1)
+#     with open("output2.json") as file2:
+#         json2 = json.load(file2)
+#     with open("output3.json") as file3:
+#         json3 = json.load(file3)
+#     with open("output4.json") as file4:
+#         json4 = json.load(file4)
+#     print(is_subset(json2, json1))
+#     assert(is_subset(json2, json1))
+#     print(is_subset(json3, json1))
+#     assert(is_subset(json3, json1))
+#     print(is_subset(json4, json1))
+#     assert(not is_subset(json4, json1))
+# if __name__ == "__main__":
+#     main()

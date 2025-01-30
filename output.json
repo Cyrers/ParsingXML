@@ -4,176 +4,285 @@
         "xmlns:Q1": "\"http://com.ibm.wbit.comptest.controller\"",
         "xmlns:xsd": "\"http://www.w3.org/2001/XMLSchema\"",
         "children": {
-            "xsd:complexType0": {
-                "name": "\"TestResults\"",
-                "children": {
-                    "xsd:sequence>0": {
-                        "children": {
-                            "xsd:element0": {
-                                "maxOccurs": "\"unbounded\"",
-                                "minOccurs": "\"0\"",
-                                "name": "\"testSuites\"",
-                                "type": "\"Q1:TestSuiteRun\"",
+            "xsd:complexType": [
+                {
+                    "attributes": {
+                        "name": "\"TestResults\""
+                    },
+                    "children": {
+                        "xsd:sequence>": [
+                            {
+                                "attributes": {},
+                                "children": {
+                                    "xsd:element": [
+                                        {
+                                            "attributes": {
+                                                "maxOccurs": "\"unbounded\"",
+                                                "minOccurs": "\"0\"",
+                                                "name": "\"testSuites\"",
+                                                "type": "\"Q1:TestSuiteRun\""
+                                            },
+                                            "children": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "xsd:attribute": [
+                            {
+                                "attributes": {
+                                    "name": "\"testProject\"",
+                                    "type": "\"xsd:string\""
+                                },
                                 "children": {}
                             }
-                        }
+                        ]
+                    }
+                },
+                {
+                    "attributes": {
+                        "name": "\"TestSuiteRun\""
                     },
-                    "xsd:attribute1": {
-                        "name": "\"testProject\"",
-                        "type": "\"xsd:string\"",
-                        "children": {}
-                    }
-                }
-            },
-            "xsd:complexType1": {
-                "name": "\"TestSuiteRun\"",
-                "children": {
-                    "xsd:complexContent>0": {
-                        "children": {
-                            "xsd:extension0": {
-                                "base": "\"Q1:TestRun\"",
+                    "children": {
+                        "xsd:complexContent>": [
+                            {
+                                "attributes": {},
                                 "children": {
-                                    "xsd:sequence>0": {
-                                        "children": {
-                                            "xsd:element0": {
-                                                "maxOccurs": "\"unbounded\"",
-                                                "minOccurs": "\"0\"",
-                                                "name": "\"testCases\"",
-                                                "type": "\"Q1:TestCaseRun\"",
-                                                "children": {}
-                                            }
-                                        }
-                                    },
-                                    "xsd:attribute1": {
-                                        "name": "\"tests\"",
-                                        "type": "\"xsd:int\"",
-                                        "children": {}
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "xsd:complexType2": {
-                "name": "\"TestCaseRun\"",
-                "children": {
-                    "xsd:complexContent>0": {
-                        "children": {
-                            "xsd:extension0": {
-                                "base": "\"Q1:TestRun\"",
-                                "children": {
-                                    "xsd:sequence>0": {
-                                        "children": {
-                                            "xsd:element0": {
-                                                "name": "\"result\"",
-                                                "type": "\"Q1:Severity\"",
-                                                "children": {}
+                                    "xsd:extension": [
+                                        {
+                                            "attributes": {
+                                                "base": "\"Q1:TestRun\""
                                             },
-                                            "xsd:element1": {
-                                                "maxOccurs": "\"unbounded\"",
-                                                "minOccurs": "\"0\"",
-                                                "name": "\"variations\"",
-                                                "type": "\"Q1:VariationRun\"",
-                                                "children": {}
-                                            }
-                                        }
-                                    },
-                                    "xsd:attribute1": {
-                                        "name": "\"variationCount\"",
-                                        "type": "\"xsd:int\"",
-                                        "children": {}
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "xsd:complexType3": {
-                "name": "\"VariationRun\"",
-                "children": {
-                    "xsd:complexContent>0": {
-                        "children": {
-                            "xsd:extension0": {
-                                "base": "\"Q1:TestRun\"",
-                                "children": {
-                                    "xsd:sequence>0": {
-                                        "children": {
-                                            "xsd:element0": {
-                                                "name": "\"result\"",
-                                                "type": "\"Q1:Severity\"",
-                                                "children": {}
-                                            },
-                                            "xsd:element1": {
-                                                "name": "\"exception\"",
-                                                "nillable": "\"true\"",
-                                                "type": "\"xsd:string\"",
-                                                "children": {
-                                                    "xsd:annotation>0": {
+                                            "children": {
+                                                "xsd:sequence>": [
+                                                    {
+                                                        "attributes": {},
                                                         "children": {
-                                                            "xsd:documentation>0": {
-                                                                "children": {}
-                                                            }
+                                                            "xsd:element": [
+                                                                {
+                                                                    "attributes": {
+                                                                        "maxOccurs": "\"unbounded\"",
+                                                                        "minOccurs": "\"0\"",
+                                                                        "name": "\"testCases\"",
+                                                                        "type": "\"Q1:TestCaseRun\""
+                                                                    },
+                                                                    "children": {}
+                                                                }
+                                                            ]
                                                         }
                                                     }
-                                                }
+                                                ],
+                                                "xsd:attribute": [
+                                                    {
+                                                        "attributes": {
+                                                            "name": "\"tests\"",
+                                                            "type": "\"xsd:int\""
+                                                        },
+                                                        "children": {}
+                                                    }
+                                                ]
                                             }
                                         }
-                                    }
+                                    ]
                                 }
                             }
-                        }
+                        ]
                     }
-                }
-            },
-            "xsd:simpleType4": {
-                "name": "\"Severity\"",
-                "children": {
-                    "xsd:restriction0": {
-                        "base": "\"xsd:string\"",
-                        "children": {
-                            "xsd:enumeration0": {
-                                "value": "\"pass\"",
+                },
+                {
+                    "attributes": {
+                        "name": "\"TestCaseRun\""
+                    },
+                    "children": {
+                        "xsd:complexContent>": [
+                            {
+                                "attributes": {},
+                                "children": {
+                                    "xsd:extension": [
+                                        {
+                                            "attributes": {
+                                                "base": "\"Q1:TestRun\""
+                                            },
+                                            "children": {
+                                                "xsd:sequence>": [
+                                                    {
+                                                        "attributes": {},
+                                                        "children": {
+                                                            "xsd:element": [
+                                                                {
+                                                                    "attributes": {
+                                                                        "name": "\"result\"",
+                                                                        "type": "\"Q1:Severity\""
+                                                                    },
+                                                                    "children": {}
+                                                                },
+                                                                {
+                                                                    "attributes": {
+                                                                        "maxOccurs": "\"unbounded\"",
+                                                                        "minOccurs": "\"0\"",
+                                                                        "name": "\"variations\"",
+                                                                        "type": "\"Q1:VariationRun\""
+                                                                    },
+                                                                    "children": {}
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ],
+                                                "xsd:attribute": [
+                                                    {
+                                                        "attributes": {
+                                                            "name": "\"variationCount\"",
+                                                            "type": "\"xsd:int\""
+                                                        },
+                                                        "children": {}
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "attributes": {
+                        "name": "\"VariationRun\""
+                    },
+                    "children": {
+                        "xsd:complexContent>": [
+                            {
+                                "attributes": {},
+                                "children": {
+                                    "xsd:extension": [
+                                        {
+                                            "attributes": {
+                                                "base": "\"Q1:TestRun\""
+                                            },
+                                            "children": {
+                                                "xsd:sequence>": [
+                                                    {
+                                                        "attributes": {},
+                                                        "children": {
+                                                            "xsd:element": [
+                                                                {
+                                                                    "attributes": {
+                                                                        "name": "\"result\"",
+                                                                        "type": "\"Q1:Severity\""
+                                                                    },
+                                                                    "children": {}
+                                                                },
+                                                                {
+                                                                    "attributes": {
+                                                                        "name": "\"exception\"",
+                                                                        "nillable": "\"true\"",
+                                                                        "type": "\"xsd:string\""
+                                                                    },
+                                                                    "children": {
+                                                                        "xsd:annotation>": [
+                                                                            {
+                                                                                "attributes": {},
+                                                                                "children": {
+                                                                                    "xsd:documentation>": [
+                                                                                        {
+                                                                                            "attributes": {},
+                                                                                            "children": {}
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "attributes": {
+                        "name": "\"TestRun\""
+                    },
+                    "children": {
+                        "xsd:attribute": [
+                            {
+                                "attributes": {
+                                    "name": "\"name\"",
+                                    "type": "\"xsd:string\""
+                                },
                                 "children": {}
                             },
-                            "xsd:enumeration1": {
-                                "value": "\"fail\"",
+                            {
+                                "attributes": {
+                                    "name": "\"startTime\"",
+                                    "type": "\"xsd:dateTime\""
+                                },
                                 "children": {}
                             },
-                            "xsd:enumeration2": {
-                                "value": "\"error\"",
+                            {
+                                "attributes": {
+                                    "name": "\"endTime\"",
+                                    "type": "\"xsd:dateTime\""
+                                },
+                                "children": {}
+                            },
+                            {
+                                "attributes": {
+                                    "name": "\"result\"",
+                                    "type": "\"xsd:string\""
+                                },
                                 "children": {}
                             }
-                        }
+                        ]
                     }
                 }
-            },
-            "xsd:complexType5": {
-                "name": "\"TestRun\"",
-                "children": {
-                    "xsd:attribute0": {
-                        "name": "\"name\"",
-                        "type": "\"xsd:string\"",
-                        "children": {}
+            ],
+            "xsd:simpleType": [
+                {
+                    "attributes": {
+                        "name": "\"Severity\""
                     },
-                    "xsd:attribute1": {
-                        "name": "\"startTime\"",
-                        "type": "\"xsd:dateTime\"",
-                        "children": {}
-                    },
-                    "xsd:attribute2": {
-                        "name": "\"endTime\"",
-                        "type": "\"xsd:dateTime\"",
-                        "children": {}
-                    },
-                    "xsd:attribute3": {
-                        "name": "\"result\"",
-                        "type": "\"xsd:string\"",
-                        "children": {}
+                    "children": {
+                        "xsd:restriction": [
+                            {
+                                "attributes": {
+                                    "base": "\"xsd:string\""
+                                },
+                                "children": {
+                                    "xsd:enumeration": [
+                                        {
+                                            "attributes": {
+                                                "value": "\"pass\""
+                                            },
+                                            "children": {}
+                                        },
+                                        {
+                                            "attributes": {
+                                                "value": "\"fail\""
+                                            },
+                                            "children": {}
+                                        },
+                                        {
+                                            "attributes": {
+                                                "value": "\"error\""
+                                            },
+                                            "children": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
                     }
                 }
-            }
+            ]
         }
     }
 }
