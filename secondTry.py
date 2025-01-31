@@ -60,7 +60,20 @@ def returnLignesEnfant(lignes):
                     pile_tags.append(lignes[i])
     return None, None
 
-
+def parsingXSD(xsd):
+    xsd = xsd.strip().replace('"\n', '"').split('\n')
+    if xsd[0] == '<?xml version="1.0" encoding="UTF-8"?>':
+        xsd = xsd[1:]
+    if xsd[0].startswith(''):
+        xsd = xsd[1:]
+    if xsd[0].startswith('<!--'):
+        xsd = xsd[1:]
+    xsd = [line.replace('\t', '') for line in xsd]
+    # print(xsd)
+    for i in range(len(xsd)):
+        while xsd[i].startswith(' '):
+            xsd[i] = xsd[i][1:]
+    return xsd
 
 
 def add_attributes_to_json(json_dict, element_name, attributes):
@@ -81,19 +94,21 @@ def convert_xsd_to_json(filename='bidule.xsd', output_file='output.json'):
 
     file = ouvertureDuXSD(filename)  # Lire le fichier XSD
     cleaned_file = parsingXSD(file)  # Nettoyer le fichier (prétraitement)
+    # print(cleaned_file)
 
+        
     # Initialisation du dictionnaire JSON
     json_dict = {}
     element_name = cleaned_file[0].split(" ")[0][1:]  # Récupère le nom de la balise
     element_attributes = retourHashMapContenuLigne(cleaned_file[0])
+    
     json_dict[element_name] = element_attributes
     json_dict[element_name]["children"] = {}
 
     # Convertir l'élément racine et ses enfants
-    add_child_to_json(json_dict[element_name]["children"], cleaned_file)
-
-    save_json_to_file(json_dict, output_file)
-    return json_dict
+    # add_child_to_json(json_dict[element_name]["children"], cleaned_file)
+    # save_json_to_file(json_dict, output_file)
+    # return json_dict
 
 def save_json_to_file(json_data, output_filename):
     """Sauvegarde le dictionnaire JSON dans un fichier."""
@@ -119,16 +134,7 @@ def add_child_to_json(json_dict, lignes_courantes):
     return json_dict
 
 
-def parsingXSD(xsd):
-    xsd = xsd.strip().split('\n')
-    if xsd[0] == '<?xml version="1.0" encoding="UTF-8"?>':
-        xsd = xsd[1:]
-    xsd = [line.replace('\t', '') for line in xsd]
-    # print(xsd)
-    for i in range(len(xsd)):
-        while xsd[i].startswith(' '):
-            xsd[i] = xsd[i][1:]
-    return xsd
+
 
 
 def is_subset(json1, json2):
@@ -203,23 +209,19 @@ def print_json_tree(json_dict, indent=0, parent_name=None):
 
 
 def main():
-    convert_xsd_to_json("bidule.xsd", "output1.json")
-    convert_xsd_to_json("bidule2.xsd", "output2.json")
-    convert_xsd_to_json("biduleMinux.xsd", "output3.json")
-    convert_xsd_to_json("bidulefalse.xsd", "output4.json")
+    convert_xsd_to_json("Test_fichiers/SmokeDetector_M1.capella", "output1.json")
+    convert_xsd_to_json("Test_fichiers/SmokeDetector_M1'.capella", "output2.json")
     with open("output1.json") as file1:
         json1 = json.load(file1)
     with open("output2.json") as file2:
         json2 = json.load(file2)
-    with open("output3.json") as file3:
-        json3 = json.load(file3)
-    with open("output4.json") as file4:
-        json4 = json.load(file4)
-    print(check_diff_subset(json2, json1))
-    print(check_diff_subset(json3, json1))
-    print(check_diff_subset(json4, json1))
-    print(print_json_tree(json1))
-    
+    print(is_subset(json1, json2))
+    print(is_subset(json2, json1))
 
-if __name__ == "__main__":
-    main()
+
+# if __name__ == "__main__":
+#     main()
+
+
+test = convert_xsd_to_json("Test_fichiers/SmokeDetector_M1.capella", "output1.json")
+print(test)
