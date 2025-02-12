@@ -1,6 +1,8 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog
-from xml_comparator import open_File, parse_to_tree, xml_to_graph, draw_graph, save_ids_to_file, get_element_id
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QTextEdit
+from xml_comparator import open_File, parse_to_tree, xml_to_graph, draw_graph, save_ids_to_file, get_element_id, \
+    elements_equal
+
 
 class MainWindow(QWidget):
     def __init__(self):
@@ -8,7 +10,7 @@ class MainWindow(QWidget):
 
         # Configurer la fenêtre
         self.setWindowTitle('Comparaison de fichiers XML')
-        self.setGeometry(100, 100, 400, 300)
+        self.setGeometry(100, 100, 800, 600)  # Fenêtre plus grande
 
         # Créer un layout vertical
         layout = QVBoxLayout()
@@ -27,15 +29,17 @@ class MainWindow(QWidget):
         self.button2.clicked.connect(self.load_file2)  # Connecter l'événement de clic
         layout.addWidget(self.button2)
 
-        # Créer le bouton pour effectuer la comparaison dans un sens
-        self.compare_button_1_to_2 = QPushButton('Comparer Fichier 1 → Fichier 2', self)
-        self.compare_button_1_to_2.clicked.connect(self.compare_1_to_2)  # Connecter l'événement de clic
-        layout.addWidget(self.compare_button_1_to_2)
+        # Créer un bouton unique pour comparer les fichiers
+        self.compare_button = QPushButton('Comparer les fichiers', self)
+        self.compare_button.clicked.connect(self.compare_files)  # Connecter l'événement de clic
+        layout.addWidget(self.compare_button)
 
-        # Créer le bouton pour effectuer la comparaison dans l'autre sens
-        self.compare_button_2_to_1 = QPushButton('Comparer Fichier 2 → Fichier 1', self)
-        self.compare_button_2_to_1.clicked.connect(self.compare_2_to_1)  # Connecter l'événement de clic
-        layout.addWidget(self.compare_button_2_to_1)
+        # Créer la zone de texte pour afficher les IDs détectés
+        self.text_area = QTextEdit(self)
+        self.text_area.setReadOnly(True)  # Ne pas permettre la modification du texte
+        self.text_area.setStyleSheet("background-color: white;")  # Fond blanc
+        self.text_area.setPlaceholderText("Les IDs ajoutés seront affichés ici.")  # Texte par défaut
+        layout.addWidget(self.text_area)
 
         # Créer le bouton pour fermer l'application
         self.close_button = QPushButton('Fermer l\'application', self)
@@ -52,7 +56,8 @@ class MainWindow(QWidget):
     def load_file1(self):
         # Ouvrir une boîte de dialogue pour charger un fichier
         options = QFileDialog.Options()
-        file_name, _ = QFileDialog.getOpenFileName(self, "Charger fichier 1", "", "Tous les fichiers (*)", options=options)
+        file_name, _ = QFileDialog.getOpenFileName(self, "Charger fichier 1", "", "Tous les fichiers (*)",
+                                                   options=options)
         if file_name:
             self.file1_path = file_name
             self.update_label()
@@ -61,7 +66,8 @@ class MainWindow(QWidget):
     def load_file2(self):
         # Ouvrir une boîte de dialogue pour charger un fichier
         options = QFileDialog.Options()
-        file_name, _ = QFileDialog.getOpenFileName(self, "Charger fichier 2", "", "Tous les fichiers (*)", options=options)
+        file_name, _ = QFileDialog.getOpenFileName(self, "Charger fichier 2", "", "Tous les fichiers (*)",
+                                                   options=options)
         if file_name:
             self.file2_path = file_name
             self.update_label()
@@ -74,15 +80,10 @@ class MainWindow(QWidget):
     def check_files_loaded(self):
         # Vérifier si les deux fichiers sont chargés
         if self.file1_path and self.file2_path:
-            self.enable_comparison_buttons()
+            self.compare_button.setEnabled(True)  # Activer le bouton de comparaison
 
-    def enable_comparison_buttons(self):
-        # Activer les boutons de comparaison si les deux fichiers sont chargés
-        self.compare_button_1_to_2.setEnabled(True)
-        self.compare_button_2_to_1.setEnabled(True)
-
-    def compare_1_to_2(self):
-        # Logique pour la comparaison du fichier 1 avec le fichier 2
+    def compare_files(self):
+        # Comparer les fichiers dans les deux sens (1 → 2 et 2 → 1)
         file1_content = open_File(self.file1_path)
         file2_content = open_File(self.file2_path)
 
@@ -91,35 +92,48 @@ class MainWindow(QWidget):
             root2 = parse_to_tree(file2_content)
 
             if root1 and root2:
-                reference_elements = list(root2.iter())
-                compared_elements = list(root1.iter())
+                # Comparer le fichier 1 avec le fichier 2
+                reference_elements_1_to_2 = list(root2.iter())  # Fichier de référence
+                compared_elements_1_to_2 = list(root1.iter())  # Fichier comparé
 
-                save_ids_to_file(reference_elements, "reference_ids.json")
-                save_ids_to_file(compared_elements, "compared_ids.json")
+                # Comparer le fichier 2 avec le fichier 1
+                reference_elements_2_to_1 = list(root1.iter())  # Fichier de référence
+                compared_elements_2_to_1 = list(root2.iter())  # Fichier comparé
 
-                reference_dict = {get_element_id(e): e for e in reference_elements if get_element_id(e)}
-                graph, compared_dict = xml_to_graph(root1, reference_elements, compared_elements, reference_dict=reference_dict)
-                draw_graph(graph)
+                save_ids_to_file(reference_elements_1_to_2, "reference_ids_1_to_2.json")
+                save_ids_to_file(compared_elements_1_to_2, "compared_ids_1_to_2.json")
 
-    def compare_2_to_1(self):
-        # Logique pour la comparaison du fichier 2 avec le fichier 1
-        file1_content = open_File(self.file1_path)
-        file2_content = open_File(self.file2_path)
+                save_ids_to_file(reference_elements_2_to_1, "reference_ids_2_to_1.json")
+                save_ids_to_file(compared_elements_2_to_1, "compared_ids_2_to_1.json")
 
-        if file1_content and file2_content:
-            root1 = parse_to_tree(file1_content)
-            root2 = parse_to_tree(file2_content)
+                reference_dict_1_to_2 = {get_element_id(e): e for e in reference_elements_1_to_2 if get_element_id(e)}
+                graph_1_to_2, compared_dict_1_to_2 = xml_to_graph(root1, reference_elements_1_to_2,
+                                                                  compared_elements_1_to_2,
+                                                                  reference_dict=reference_dict_1_to_2)
 
-            if root1 and root2:
-                reference_elements = list(root1.iter())
-                compared_elements = list(root2.iter())
+                reference_dict_2_to_1 = {get_element_id(e): e for e in reference_elements_2_to_1 if get_element_id(e)}
+                graph_2_to_1, compared_dict_2_to_1 = xml_to_graph(root2, reference_elements_2_to_1,
+                                                                  compared_elements_2_to_1,
+                                                                  reference_dict=reference_dict_2_to_1)
 
-                save_ids_to_file(reference_elements, "reference_ids.json")
-                save_ids_to_file(compared_elements, "compared_ids.json")
+                # Identifier les éléments ajoutés dans les deux sens
+                added_ids_1_to_2 = [get_element_id(e) for e in compared_elements_1_to_2 if
+                                    get_element_id(e) not in reference_dict_1_to_2]
+                added_ids_2_to_1 = [get_element_id(e) for e in compared_elements_2_to_1 if
+                                    get_element_id(e) not in reference_dict_2_to_1]
 
-                reference_dict = {get_element_id(e): e for e in reference_elements if get_element_id(e)}
-                graph, compared_dict = xml_to_graph(root2, reference_elements, compared_elements, reference_dict=reference_dict)
-                draw_graph(graph)
+                # Afficher les résultats dans la zone de texte
+                if added_ids_1_to_2:
+                    self.text_area.setText(f"IDs ajoutés (Fichier 1 → Fichier 2) :\n" + "\n".join(added_ids_1_to_2))
+                    draw_graph(graph_1_to_2)  # Afficher le graph du sens 1 → 2
+                elif added_ids_2_to_1:
+                    self.text_area.setText(f"IDs ajoutés (Fichier 2 → Fichier 1) :\n" + "\n".join(added_ids_2_to_1))
+                    draw_graph(graph_2_to_1)  # Afficher le graph du sens 2 → 1
+                else:
+                    self.text_area.setText("Les deux fichiers sont identiques !")  # Afficher ce message si aucun ajout
+                    self.text_area.setStyleSheet(
+                        "background-color: lightgray;")  # Change le fond pour indiquer que les fichiers sont identiques.
+
 
 if __name__ == '__main__':
     # Créer l'application
