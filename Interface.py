@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QTextEdit
-from xml_comparator import open_File, parse_to_tree, xml_to_graph, draw_graph, save_ids_to_file, get_element_id, \
-    elements_equal
+from xml_comparator import open_File, parse_to_tree, xml_to_graph, draw_graph, save_ids_to_file, get_element_id
+import json
 
 
 class MainWindow(QWidget):
@@ -46,12 +46,20 @@ class MainWindow(QWidget):
         self.close_button.clicked.connect(self.close)  # Connecter l'événement de clic
         layout.addWidget(self.close_button)
 
+        # Bouton pour exporter les résultats en JSON
+        self.export_button = QPushButton('Exporter en JSON', self)
+        self.export_button.clicked.connect(self.export_results)
+        self.export_button.setEnabled(False)  # Désactivé tant qu'il n'y a pas de résultats
+        layout.addWidget(self.export_button)
+
         # Appliquer le layout à la fenêtre
         self.setLayout(layout)
 
         # Initialiser les chemins des fichiers
         self.file1_path = ''
         self.file2_path = ''
+
+        self.comparison_results = ''
 
     def load_file1(self):
         # Ouvrir une boîte de dialogue pour charger un fichier
@@ -125,14 +133,36 @@ class MainWindow(QWidget):
                 # Afficher les résultats dans la zone de texte
                 if added_ids_1_to_2:
                     self.text_area.setText(f"IDs ajoutés (Fichier 1 → Fichier 2) :\n" + "\n".join(added_ids_1_to_2))
+                    self.comparison_results = added_ids_1_to_2
                     draw_graph(graph_1_to_2)  # Afficher le graph du sens 1 → 2
                 elif added_ids_2_to_1:
                     self.text_area.setText(f"IDs ajoutés (Fichier 2 → Fichier 1) :\n" + "\n".join(added_ids_2_to_1))
+                    self.comparison_results = added_ids_2_to_1
                     draw_graph(graph_2_to_1)  # Afficher le graph du sens 2 → 1
                 else:
                     self.text_area.setText("Les deux fichiers sont identiques !")  # Afficher ce message si aucun ajout
                     self.text_area.setStyleSheet(
                         "background-color: lightgray;")  # Change le fond pour indiquer que les fichiers sont identiques.
+                self.export_button.setEnabled(True)
+
+    def export_results(self):
+        if not self.comparison_results:
+            return
+
+        file_name, _ = QFileDialog.getSaveFileName(self, "Enregistrer le fichier", "",
+                                                   "Fichiers JSON (*.json);;Tous les fichiers (*)")
+
+        if file_name:
+            # S'assurer que l'extension .json est bien présente
+            if not file_name.lower().endswith(".json"):
+                file_name += ".json"
+
+            try:
+                with open(file_name, 'w', encoding='utf-8') as f:
+                    json.dump(self.comparison_results, f, indent=4, ensure_ascii=False)
+                self.text_area.append(f"\nRésultats exportés : {file_name}")
+            except Exception as e:
+                self.text_area.append(f"\nErreur lors de l'exportation : {e}")
 
 
 if __name__ == '__main__':

@@ -81,18 +81,3 @@ def save_ids_to_file(elements, filename):
         json.dump(ids, f, indent=4)
 
 
-# file1_content = open_File("Test_fichiers/SmokeDetector_M1'.capella") # Fichier modifié
-# file2_content = open_File("Test_fichiers/SmokeDetector_M1''.capella")  # Fichier de référence
-# if file1_content and file2_content:
-#     root1 = parse_to_tree(file1_content)
-#     root2 = parse_to_tree(file2_content)
-#     if root1 and root2:
-#         reference_elements = list(root2.iter())
-#         compared_elements = list(root1.iter())
-#
-#         save_ids_to_file(reference_elements, "reference_ids.json")
-#         save_ids_to_file(compared_elements, "compared_ids.json")
-#
-#         reference_dict = {get_element_id(e): e for e in reference_elements if get_element_id(e)}
-#         graph, compared_dict = xml_to_graph(root1, reference_elements, compared_elements, reference_dict=reference_dict)
-#         draw_graph(graph)
